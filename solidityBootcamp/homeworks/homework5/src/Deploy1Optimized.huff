@@ -1,0 +1,36 @@
+#define function read() view returns (uint256)
+
+#define constant SLOT = 0x00
+
+#define macro SET() = takes(0) returns (0){
+    0x11 
+    [SLOT] 
+    sstore
+
+}
+
+#define macro READ_VALUE() = takes(0) returns(0) {
+    [SLOT]         
+    sload           
+    0x00            z
+    mstore          
+    0x20           
+    0x00            
+    return          
+}
+
+#define macro MAIN() = takes(0) returns (0) {
+    SET()
+    0x00 calldataload 0xe0 shr
+    dup1 __FUNC_SIG(read) eq readDest jumpi
+    0x00 0x00 revert
+    readDest:
+        READ_VALUE()
+
+    // 0x0b6
+    // 0x027 
+    // 0x00 
+    // codecopy
+
+
+}
