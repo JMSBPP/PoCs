@@ -1,9 +1,9 @@
 # EVM Driven Algorithms and Data Structures Exercises
-<div style="text-align: center;">
-  <img src="images/evm.png" alt="Description" width="300"/>
+<p align="center">
+  <img src="images/evm.png" alt="Description" width="500"/>
 </div>
 
-## About
+## Overview
 
 This repository is dedicated to exploring and solving LeetCode exercises focused on algorithms and data structures, with a unique emphasis on Ethereum Virtual Machine (EVM) concepts. The exercises are designed to deepen understanding of how EVM operates and how it can be leveraged in algorithmic problem-solving.
 
