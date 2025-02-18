@@ -1,0 +1,53 @@
+//We receive as calldata an array of bytes representing a list of numbers
+
+//1. From calldata we get an array of numbers 
+
+// 1 <= array.length <= 15
+#define constant MAX_ARRAY_LENGTH = 0x1e0
+// 1 <= array[i] <= 108
+
+//1. Fill in the list of numbers
+// 10^8<2^X ---> X=27 ---X->32
+
+#define constant OFFSET = 0x20 //32 bytes
+
+//1.2. This implies that given a bytes8[15] array encoded
+//we are tasked with:
+/*interface*/
+
+#define function receiveMatchSticks(bytes32[5]) pure returns
+
+//[1,1,2,2,2]---> false
+//0xa789800201000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000
+#define macro ARRAY_LENGHT() = takes(0), returns(0){
+    0x04 calldataload 
+    //STACK-STATE[callData[funcSelector:]]
+    //retreive only the first 32 bytes 
+    //after the function selector
+    
+    //to read each element we
+    //must substract 0x20 15 times
+}
+#define macro MAIN()=takes(0) returns(0){
+    0x00 calldataload 0xe0 shr//STACK-STATE [funcSelector]
+    __FUNC_SIG(receiveMatchSticks(bytes32[15])) eq //STACK-STATE [0x486e2d2c==""]                     
+    jumpi getArrayLenght   //STACK-STATE [{0,1}]
+    getArrayLenght:
+        ARRAY_LENGHT()
+}
+//-----1.2.1 Reserving 15 slots in memory. This is keep appending until
+//---msize=(msize_0 -15 )
+//-----1.2.2 every 32 bits (8 bytes) we store a value in the array
+//-----this is achieved shifting the bytes
+//------1.2.3 every value is sent to a function that
+//------keeps track of the greatest number achieved
+//--- the goal is to find the maximum number in the array and confirm
+// there are only 4 instances of that number 
+//-----1.2.3 if there is less data than the 15 (<15) we store in the next
+//------slot the number of bytes
+//-----1.2.4 With the values in the memory slots
+//------memory: [0xfff,0xfff,0xfff,0xfff,....,bytes(numberOfBytes)]
+
+
+
+
