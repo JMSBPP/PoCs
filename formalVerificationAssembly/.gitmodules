@@ -1,0 +1,12 @@
+[submodule "horseStore/lib/forge-std"]
+	path = horseStore/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "horseStore/lib/foundry-huff"]
+	path = horseStore/lib/foundry-huff
+	url = https://github.com/huff-language/foundry-huff
+[submodule "horseStore/lib/openzeppelin-contracts"]
+	path = horseStore/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "horseStore/lib/huffmate"]
+	path = horseStore/lib/huffmate
+	url = https://github.com/huff-language/huffmate

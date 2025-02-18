@@ -1,0 +1,173 @@
+//-----SOLIDITY BYTECODE-----
+// 0x6080604052348015600e575f80fd5b5060a580601a5f395ff3fe6080604052348015600e575f80fd5b50600436106030575f3560e01c8063cdfead2e146034578063e026c017146045575b5f80fd5b6043603f3660046059565b5f55565b005b5f5460405190815260200160405180910390f35b5f602082840312156068575f80fd5b503591905056fea2646970667358221220d4647f79dbaf97b052c5c79ca065b84c06640ae791770d728a4d958678ab356664736f6c634300081a0033
+
+//1. CONTRACT CREATION CODE
+//1.1 FREE MEMORY POINTER
+PUSH1 0x80 //STACK-STATE [0x80]
+PUSH1 0x40 //STACK-STATE [0x40, 0x80]
+MSTORE   //STACK-STATE [], MEMORY [0x00: ,0x20: ,0x40:0x80]
+//1.2  If someone send money, revert (this is because..)
+//there are no payable funcitons in the contract)
+CALLVALUE // STACK-STATE [msg.value]
+DUP1      // STACK-STATE [msg.value, msg.value]
+ISZERO    // STACK-STATE [msg.value==0, msg.value]
+PUSH1 0x0e(14) //STACK-STATE [0x0e(program counter=14), msg.value==0, msg.value]
+JUMPI   //If msg.value==0 JUMP TO OPCODE 0x0e(14)(JUMPDEST)
+PUSH0   //else STACK-STATE [0x00,msg.value]
+DUP1    //STACK-STATE [0x00,0x00, msg.value]
+REVERT  //[msg.value]
+
+//1.3 Continue excecution if its passsed the payable check
+//insert runtime code in the blockchain
+JUMPDEST //STACK-STATE [msg.value]
+POP      //STACK-STATE []
+PUSH1 0xa5  // STACK-STATE [0xa5(165)]
+DUP1    // STACK-STATE [0xa5,0xa5]
+PUSH1 0x1a   // STACK-STATE [0x1a(26),0xa5 (165),0xa5]
+PUSH0 // STACK-STATE [0X00 ,0x1a(26),0xa5 (165),0xa5]
+CODECOPY   //STACK-STATE [0x0: destOffset ,0x1a(26): offset,0xa5(165): bytecode size, 0xa5(165)]
+PUSH0      //STACK-STATE[0x00, 0xa5], MEMORY [bytecode(165 bits)]
+RETURN     //STACK-STATE [] return is because the contract is created by a transaction not a contract
+INVALID    //STACK-STAKE []
+
+//2. CONTRACT EXECUTION CODE
+//2.1 FREE MEMORY POINTER
+PUSH1 0x80
+PUSH1 0x40
+MSTORE
+//2.1 PAYABLE CHECK ALL FUNCTIONS
+CALLVALUE 
+DUP1
+ISZERO
+PUSH1 0x0e
+JUMPI
+PUSH0
+DUP1
+REVERT
+
+//2.2 STARTING EXECUTION 
+//2.2.1 CHECK IF THERE IS ENOUGH CALLDATA FOR A FUNCTION
+//SELECTOR
+JUMPDEST
+POP
+PUSH1 0x04  //STACK-STATE [0x04]
+CALLDATASIZE   //STACK-STATE [CALLDATASIZE, 0x04(4 bits)]
+LT          //STACK-STATE [CALLDATASIZE<4]
+PUSH1 0x30 //STACK-STATE [0x30(48), CALLDATASIZE<4]
+JUMPI
+
+//2.2.1.1 Execution continues if the calldata 
+//is enough to be a function selector
+//THIS IS THE FUNCTION DISPATCHER
+PUSH0  //STACK-STATE [0x00]
+CALLDATALOAD //STACK-STATE [calldata,0X00]
+PUSH1 0xe0  //STACK-STATE [0X0e,0X00]
+SHR     //STACK-STATE [calldata[0:4](function selector)]
+DUP1    //STACK-STATE [functionSelector,functionSelector]
+PUSH4 0xcdfead2e //STACK-STATE [0xcdfead2e(functionSelector), functionSelector]
+EQ   //STACK-STATE [functionSelector == 0xcdfead2e, functionSelector]
+PUSH1 0x34  //STACK-STATE [0x34(52), functionSelector == 0xcdfead2e]
+JUMPI     //STACK-STATE [functionSelector]
+
+//2.2.1.1.1 FUNCTION SELECTOR DID NOT MATCH
+//THEN TRY THE NEXT FUNCTION SELECTOR
+DUP1   //STACK-STATE [functionSelector, functionSelector]
+PUSH4 0xe026c017  //STACK-STATE [0xe026c017(functionSelector), functionSelector]
+EQ   //STACK-STATE [functionSelector == 0xe026c017, functionSelector]
+PUSH1 0x45 //STACK-STATE [0x45(69), functionSelector == 0xe026c017]
+JUMPI  //STACK-STATE [functionSelector]
+
+//2.2.1.2 execution jumps here when calldata is smaller than
+//function selector (4 bits), there are not functions
+// so revert
+
+JUMPDEST 
+PUSH0  //STACK-STATE [0x00]
+DUP1   //STACK-STATE [0x00,0x00]
+REVERT //[]
+
+//2.2.1.2 THIS IS IF THE FIRST FUNCTION SELECTOR MATCHED
+//THE FIRST CHECK
+//updateHorseNumber(uint256)
+//FUNCTION EXECUTOR
+JUMPDEST    //STACK-STATE [func_selector]
+PUSH1 0x43  //STACK-STATE [0x43(67), func_selector]
+PUSH1 0x3f  //STACK-STATE [0x3f(63), 0x43(67), func_selector]/
+CALLDATASIZE //STACK-STATE [CALLDATASIZE, 0x43(67), func_selector]
+PUSH1 0x04   //STACK-STATE [0x04, CALLDATASIZE, 0x43(67), func_selector]
+PUSH1 0x59   //STACK-STATE [0x59(89), 0x04, CALLDATASIZE, 0x43(67), func_selector]
+JUMP
+
+JUMPDEST
+PUSH0
+SSTORE
+JUMP
+JUMPDEST
+
+STOP
+JUMPDEST
+
+PUSH0
+SLOAD
+PUSH1 0x40
+MLOAD
+SWAP1
+DUP2
+MSTORE
+PUSH1 0x20
+ADD
+PUSH1 0x40
+MLOAD
+DUP1
+SWAP2
+SUB
+SWAP1
+RETURN
+
+
+// [0x59] JUMPDEST FOR updateHorseNumber(uint256)
+//------CHECH IF THERE IS ANY VALUE TO UPDATE THE HORSE NUMBER----
+JUMPDEST //STACK-STATE [0x04, CALLDATASIZE, 0x43(67), func_selector]
+PUSH0    //STACK-STATE [0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+PUSH1 0x20  //STACK-STATE [0x20(32), 0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+DUP3        //STACK-STATE [0X04, 0x20(32), 0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+DUP5        //STACK-STATE [CALLDATASIZE, 0x04, 0x20(32), 0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+SUB         //STACK-STATE[CALLDATASIZE-0X04, 0x20(32), 0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+SLT         //STACK-STATE[CALLDATASIZE-0X04< 0x20(32), 0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+ISZERO      //IS THERE MORE DATA THAN THE FUNCTION SELECTOR?
+PUSH1 0x68  //STACK-STATE [0x68(104), IS THERE MORE DATA THAN THE FUNCTION SELECTOR?, 0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+JUMPI //JUMP TO 0X64(104) PC IF THERE IS MORE DATA THAN THE FUNCTION SELECTOR
+
+//if there is no more data than the function selector
+//(no horse number to update)
+PUSH0  //[0x00,  0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+DUP1   //[0x00, 0x00,  0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+REVERT //[]
+
+//IF THERE IS A NUMBER TO UPDATE IT JUmPS HEERE
+JUMPDEST //STACK STATE [0x00, 0x04, CALLDATASIZE, 0x43(67), func_selector]
+POP     //STACK-STATE [ 0x04, CALLDATASIZE, 0x43(67), func_selector]
+CALLDATALOAD //STACK-STATE [CALLDATA[0X04(data after func selector),0x43(67), func_selector]
+SWAP2 //STACK-STATE [func_selector, CALLDATA[0X04(data after func selector),0x43(67)]
+SWAP1 //STACK-STATE []
+POP
+JUMP
+
+
+INVALID
+LOG2
+PUSH5 0x6970667358
+INVALID
+SLT
+KECCAK256
+INVALID
+PUSH5 0x7f79dbaf97
+INVALID
+MSTORE
+INVALID
+INVALID
+SWAP13
+LOG0
+PUSH6 0xb84c06640ae7
+SWAP2
+PUSH24 0x0d728a4d958678ab356664736f6c634300081a0033

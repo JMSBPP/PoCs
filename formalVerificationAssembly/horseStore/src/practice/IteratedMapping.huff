@@ -1,0 +1,128 @@
+//------------INTERFACE------------
+#define function _ownedTokens(address,uint256,uint256) nonpayable returns()
+
+//------------STORAGE------------------
+
+#define constant STORAGE_SLOT_0 = FREE_STORAGE_POINTER()
+
+//-------MACROS-----
+#define macro CONCAT_ELEMENTS() = takes(2) returns(1){
+    //[element1, element2]
+    0x00 //[0x00, element1, element2]
+    mstore //[element2], memory: [0x00: element1]
+    0x20 //[0x20, element2], memory: [0x00: element1]
+    mstore //[], memory: [0x00: element1, 0x20: element2]
+    0x40 //[0x40], memory: [0x00: element1, 0x20: element2]
+    0x00 //[0x00, 0x40], memory: [0x00: element1, 0x20: element2]
+    return 
+}
+
+#define macro SET_OWNED_TOKENS_VALUE() = takes(0) returns(0){
+    0x04 calldataload //[argsEncoded(address, uint256, uint256)]
+    //STACK[0xaddressuint256uint256]
+    //ACTION: modify the byte to only get the padded uint256 in the middle
+    0x60 //size
+    0x24 //offset (selector + k1)
+    0x00 // memory key
+    calldatacopy
+    //since the memory stores every 32 bytes we only need
+    //to call mload
+
+    // STACK: [0xaddressuint256uint256]
+    //MEMORY:[
+    //         0x00: 0x00000address,
+    //         0x20: 0x000000uint256(k2),
+    //         0x40: 0x000000uint256(value)]
+ 
+    //retieve the address (20 bytes most to the left)
+    0x00
+    mload
+    STORAGE_SLOT_0 
+    CONCAT_ELEMENTS() 
+    keccak256 
+    //STACK [K(0x00000address0000000),0xaddressuint256uint256 ]
+    //MEMORY:[
+    //         0x00: 0x00000address(k1),
+    //         0x20: 0x000000uint256(k2),
+    //         0x40: 0x000000uint256(value)]   
+    dup1
+    sstore//[K(0x00000address0000000),K(0x00000address0000000), 0xaddressuint256uint256]     
+    0x00 swap1 //[K(0x00000address0000000), 0x00, K(0x00000address0000000),0xaddressuint256uint256]
+    //slotOfK1 = keccak256(abi.encodePacked(k1, uint256(0)));
+    sstore
+    0x00
+    mstore
+    //STACK: [0xaddressuint256uint256]
+    //MEMORY [
+    //        0x00:K(0x00000address0000000),
+    //        0x20:0x0000000uint256(k2),
+    //        0x40:0x0000000uint256(value)
+    //        ]
+    0x20 mload 0x00 mload
+    //STACK: [K(0x00000address0000000),0x0000000uint256(k2),0xaddressuint256uint256]
+    //MEMORY [
+    //        0x00:K(0x00000address0000000),
+    //        0x20:0x0000000uint256(k2),
+    //        0x40:0x0000000uint256(value)
+    //        ]
+    CONCAT_ELEMENTS ()
+    //STACK: [C(K(0x00000address0000000),0x000uint256(k2)),0xaddressuint256uint256]
+    //STORAGE; [0x00: 0x00, ..., K(0x00000address0000000): 0x00]
+    //MEMORY [0x00:K(0x00000address0000000),
+    //       0x20: 0x000uint256(k2),
+    //       0x40:0x000uint256(value)]
+    keccak256
+    //STACK: [
+    //       K(C(K(0x00000address0000000), 0x000uint256(k2))),
+    //       0xaddressuint256uint256 
+    //       ]
+    //STORAGE; [0x00: 0x00, ..., K(0x00000address0000000): 0x00]
+    //MEMORY [0x00:K(0x00000address0000000),
+    //       0x20: 0x000uint256(k2),
+    //       0x40:0x000uint256(value)]
+    0x40 mload swap1
+    //STACK: [
+    //         K(C(K(0x00000address0000000), 0x000uint256(k2))),
+    //         0x000uint256(v),
+    //         0xaddressuint256uint256
+    //       ]
+    //STORAGE; [0x00: 0x00, ..., K(0x00000address0000000): 0x00]
+    //MEMORY [0x00:K(0x00000address0000000),
+    //       0x20: 0x000uint256(k2),
+    //       0x40:0x000uint256(value)]
+    sstore 
+    //STORAGE: [
+    //         0x00: mappingDec
+    //         ...
+    //        K(0x00000address0000000):0x00,
+    //        ...  
+    //        K(C(K(0x00000address0000000), 0x000uint256(k2))): 0x000uint256(v)                   ]
+    //STACK: [0xaddressuint256uint256]
+    //MEMORY [0x00:K(0x00000address0000000),
+    //       0x20: 0x000uint256(k2),
+    //       0x40:0x000uint256(value)]
+
+}
+
+//----------------FUNCTIONDISPATCHER----------------
+
+#define macro FUNCTION_DISPATCHER() = takes(1) returns(0){
+    //receives the value of the selector
+    dup1 //[expectedOwnedTokens]
+    __FUNC_SIG(_ownedTokens) eq //[_ownedTokens,functionSelector] == __FUNC_SIG(_ownedTokens)
+    jumpi //[]
+    _ownedTokens:
+        SET_OWNED_TOKENS_VALUE()
+        
+}
+//-------------------MAIN-----------------
+
+#define macro MAIN() = takes(0) returns(0){
+    //Initialize the slot where the mapping will be stored
+    0x00 calldataload 0xe0 shr //[functionSelector]
+    FUNCTION_DISPATCHER()
+    
+
+    //dispatch the function (FUNCTION DISPATHCER)
+    
+}

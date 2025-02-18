@@ -1,0 +1,65 @@
+// calldata -> function dispatch -> function
+#define constant NUMBER_OF_HORSES_STORAGE_SLOT = FREE_STORAGE_POINTER()
+// ASSIGNS THE PERMANENT SLOT WHERE THE STORAGE VARIABLE WILL LIVE IN THE CONTRACT
+#define macro MAIN() = takes(0) returns(0) {
+    // [0->PUSH0]
+    // [calldata - 0x00...]
+    // [0xe0, calldataload]
+    0x00 calldataload 0xe0 shr // STACK STATE: [function selector]
+    // [function selector]
+    // Now the function selector is on top of the stack
+    // We need to pass the arguments to be dispatched to the function
+    // this is done by controlling the function selectors to
+    // JUMP to the right function selector
+
+    // ----FUNCTION SELECTORS---
+    // 0xcdfead2e == update
+    // 0xe026c017 == read
+    dup1 // STACK STATE [function selector, function selector]
+
+    0xcdfead2e // STACK STATE: [0xcdfead2e, function selector, function selector]
+    eq // [true if function selector matches / false, function selector]
+    // IF 0xcdfead2e == update
+    // We use JUMPI, JUMP
+    updateJump // refers to the program counter for SET_NUMBER_HORSES
+    // STACK STATE: [updateHorseNumberPC, true/false, function selector]
+    jumpi // STACK STATE [function selector]
+    // ELSE
+    0xe026c017 // STACK STATE [0xe026c017, function selector]
+    eq // STACK STATE [true/false, function selector]
+    readJump // STACK STATE [readHorseNumberPC, true/false]
+    jumpi
+    0x00 0x00 revert
+    updateJump:
+        SET_NUMBER_HORSES()
+    readJump:
+        READ_NUMBER_HORSES()
+
+    // ----STORAGE------
+}
+
+#define macro SET_NUMBER_HORSES() = takes(0) returns(0) {
+    // We need to store it in a storage slot
+    
+    // 1. Get the value to store from calldata
+    0x04 calldataload  // STACK STATE [(calldata-function selector)]
+    // Give it a storage slot
+    [NUMBER_OF_HORSES_STORAGE_SLOT] // STACK STATE [NUMBER_OF_HORSES_STORAGE_SLOT==key, (calldata-function selector)=value]
+    // 3. sstore opcode (SSTORE(key, value))
+    sstore
+    stop
+}
+
+#define macro READ_NUMBER_HORSES() = takes(0) returns(0) {
+    // Implement the logic to read the number of horses from storage
+    [NUMBER_OF_HORSES_STORAGE_SLOT] // STACK STATE [NUMBER_OF_HORSES_STORAGE_SLOT]
+    sload // STACK STATE [STORAGE[0]]
+    0x00 // STACK STATE [0x00,STORAGE[0]]
+    mstore //STACK STATE []
+           //MEMORY STATE [STORAGE[0]]
+    
+    0x20 0x00   //STACK STATE [0x20, 0x00]
+    return //STACK STATE []
+    // stop
+    // Return the value (implementation depends on the specific requirements)
+}

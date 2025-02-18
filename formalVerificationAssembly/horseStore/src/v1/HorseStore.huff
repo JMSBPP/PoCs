@@ -1,0 +1,39 @@
+// calldata -> function dispatch -> function
+
+#define constant NUMBER_OF_HORSES_STORAGE_SLOT = FREE_STORAGE_POINTER()
+#define function updateHorseNumber(uint256) nonpayable returns()
+#define function readNumberOfHorses() view returns(uint256)
+
+
+#define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload 0xe0 shr
+    dup1 __FUNC_SIG(updateHorseNumber) eq updateJump jumpi
+    __FUNC_SIG(readNumberOfHorses) eq readJump jumpi
+    0x00 0x00 revert
+    updateJump:
+        SET_NUMBER_HORSES()
+    readJump:
+        READ_NUMBER_HORSES()
+
+    // ----STORAGE------
+}
+//0xcdfead2e0000000000000000000000000000000000000000000000000000000000000007
+//0xe026c017
+#define macro SET_NUMBER_HORSES() = takes(0) returns(0) {
+    // We need to store it in a storage slot
+    
+    // 1. Get the value to store from calldata
+    0x04 
+    calldataload  // STACK STATE [(calldata-function selector)]
+    // Give it a storage slot
+    [NUMBER_OF_HORSES_STORAGE_SLOT] // STACK STATE [NUMBER_OF_HORSES_STORAGE_SLOT==key, (calldata-function selector)=value]
+    // 3. sstore opcode (SSTORE(key, value))
+    sstore
+    stop
+}
+
+#define macro READ_NUMBER_HORSES() = takes(0) returns(0) {
+    [NUMBER_OF_HORSES_STORAGE_SLOT] sload
+    0x00 mstore
+    0x20 0x00 return 
+}
