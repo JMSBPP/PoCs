@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {GraphStorageAccess} from "../graphStorageAccess.sol";
+import {graphStorage} from "../graphStorage.sol";
 import {graphTypes} from "../graphTypes.sol";
 interface IgraphLogic is graphTypes {
     function contains(

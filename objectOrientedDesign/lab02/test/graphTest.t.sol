@@ -2,22 +2,22 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "@Test/Test.sol";
-import {GraphStorageAccess} from "../src/graphStorageAccess.sol";
-import {GraphLogicV1} from "../src/graphLogicV1.sol";
+import {graphStorage} from "../src/graphStorage.sol";
+import {graphLogicV1} from "../src/graphLogicV1.sol";
 contract graphTest is Test {
-    GraphStorageAccess private graph;
-    GraphLogicV1 private graphLogic;
+    graphStorage private graphData;
+    graphLogicV1 private graphMethods;
     function setUp() public {
-        graph = new GraphStorageAccess();
-        graphLogic = new GraphLogicV1(address(graph));
+        graphData = new graphStorage();
+        graphMethods = new graphLogicV1(address(graphData));
     }
 
     function testShouldCreateEmptyGraph() public {
         string[] memory vertices = new string[](0);
         string[][] memory edges = new string[][](0);
-        graph.initialize(vertices, edges);
-        assertEq(0, graphLogic.vertices());
-        assertEq(0, graphLogic.edges());
+        graphData.initialize(vertices, edges);
+        assertEq(0, graphMethods.vertices());
+        assertEq(0, graphMethods.edges());
     }
 
     // public void ShouldCreateGraphs(){
@@ -38,8 +38,8 @@ contract graphTest is Test {
         edges[1] = new string[](2);
         edges[1][0] = "DDYA";
         edges[1][1] = "DOPO";
-        graph.initialize(vertices, edges);
-        assertEq(3, graphLogic.vertices());
-        assertEq(2, graphLogic.edges());
+        graphData.initialize(vertices, edges);
+        assertEq(3, graphMethods.vertices());
+        assertEq(2, graphMethods.edges());
     }
 }
