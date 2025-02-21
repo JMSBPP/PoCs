@@ -2,5 +2,12 @@
 pragma solidity ^0.8.20;
 
 interface IgraphCalculatorLogic {
-    function create(bytes32 encodedStringName) external;
+    error nameAlreadyExists();
+
+    function create(string memory name) external;
+    function assign(
+        string memory graphName,
+        string[] memory vertices,
+        string[][] memory edges
+    ) external;
 }

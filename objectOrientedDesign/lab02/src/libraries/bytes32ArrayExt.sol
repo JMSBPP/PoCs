@@ -151,11 +151,11 @@ library bytes32ArrayExt {
         bytes32[] memory subset,
         bytes32[] memory referencePowerSet
     ) external pure returns (bool isSubset) {
-        isSubset = false;
+        isSubset = true;
         for (uint256 index = 0; index < subset.length; index++) {
             bytes32 vertex = subset[index];
-            if (searchBytes32(referencePowerSet, vertex)) {
-                isSubset = true;
+            if (!searchBytes32(referencePowerSet, vertex)) {
+                isSubset = false;
                 break;
             }
         }

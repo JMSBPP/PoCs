@@ -9,11 +9,17 @@ library bytes32ToStringParser {
      */
     function bytes32ToString(
         bytes32 _bytes32
-    ) public pure returns (string memory _string) {
-        bytes memory decodabledBytes = abi.encodePacked(_bytes32);
-        _string = abi.decode(decodabledBytes, (string));
+    ) public pure returns (string memory) {
+        uint8 i = 0;
+        while (i < 32 && _bytes32[i] != 0) {
+            i++;
+        }
+        bytes memory bytesArray = new bytes(i);
+        for (uint8 j = 0; j < i; j++) {
+            bytesArray[j] = _bytes32[j];
+        }
+        return string(bytesArray);
     }
-
     /**
      * @dev Converts an array of bytes32 into an array of strings.
      * @param _bytes32Array The bytes32 array to be converted.
@@ -30,15 +36,19 @@ library bytes32ToStringParser {
 
     /**
      * @dev Converts a bytes32 matrix into a string matrix.
-     * @param stringMatrix The bytes32 matrix to be converted.
-     * @return bytes32Matrix The string matrix representation of the bytes32 matrix.
+     * @param matrix The bytes32 matrix to be converted.
+     * @return stringMatrix The string matrix representation of the bytes32 matrix.
      */
     function bytes32MatrixToStringMatrix(
-        bytes32[][] memory stringMatrix
-    ) external pure returns (string[][] memory bytes32Matrix) {
-        bytes32Matrix = new string[][](stringMatrix.length);
-        for (uint i = 0; i < stringMatrix.length; i++) {
-            bytes32Matrix[i] = bytes32ArrayToStringArray(stringMatrix[i]);
+        bytes32[][] memory matrix
+    ) public pure returns (string[][] memory) {
+        string[][] memory result = new string[][](matrix.length);
+        for (uint256 i = 0; i < matrix.length; i++) {
+            result[i] = new string[](matrix[i].length);
+            for (uint256 j = 0; j < matrix[i].length; j++) {
+                result[i][j] = bytes32ToString(matrix[i][j]);
+            }
         }
+        return result;
     }
 }

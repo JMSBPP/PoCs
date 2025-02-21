@@ -18,4 +18,20 @@ interface IgraphLogic is graphTypes {
     ) external returns (bytes32 g1UnionCurrentGraph);
     function vertices() external returns (uint256 numberOfVertices);
     function edges() external returns (uint256 numberOfEdges);
+    function equals(Graph memory graph) external returns (bool areGraphsEqual);
+    function equalsGraph(
+        address otherGraphAddress
+    ) external returns (bool areGraphsEqual);
+
+    function toString()
+        external
+        returns (string memory alphabeticalOrderedEdges);
+
+    function setGraph(
+        string[] memory vertexNames,
+        string[][] memory edges
+    ) external;
+
+    function getVertices() external returns (string[] memory _vertices);
+    function getEdges() external returns (string[][] memory _edges);
 }

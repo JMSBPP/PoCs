@@ -103,6 +103,12 @@ library bytes32MatrixExt {
         }
     }
 
+    /**
+     * @dev Returns a subset of the input collection of subsets which are subsets of the given reference power set.
+     * @param collectionOfSubsets The collection of subsets to be filtered.
+     * @param referencePowerSet The reference power set to filter with.
+     * @return subsets The filtered subsets.
+     */
     function onlySubsetsOf(
         bytes32[][] memory collectionOfSubsets,
         bytes32[] memory referencePowerSet
@@ -113,10 +119,14 @@ library bytes32MatrixExt {
             subset < collectionOfSubsets.length;
             subset++
         ) {
-            if (collectionOfSubsets[subset].isSubsetOf(referencePowerSet)) {
+            if (
+                collectionOfSubsets[subset].isSubsetOf(referencePowerSet) &&
+                collectionOfSubsets[subset].length > 0
+            ) {
                 totalSubsets++;
             }
         }
+
         subsets = new bytes32[][](totalSubsets);
         uint256 subsetCount = 0;
         for (
@@ -124,7 +134,10 @@ library bytes32MatrixExt {
             subset < collectionOfSubsets.length;
             subset++
         ) {
-            if (collectionOfSubsets[subset].isSubsetOf(referencePowerSet)) {
+            if (
+                collectionOfSubsets[subset].isSubsetOf(referencePowerSet) &&
+                collectionOfSubsets[subset].length > 0
+            ) {
                 subsets[subsetCount] = collectionOfSubsets[subset];
                 subsetCount++;
             }

@@ -2,42 +2,72 @@
 pragma solidity ^0.8.20;
 
 import {graphTypes} from "./graphTypes.sol";
-import {graphInvariants} from "../src/graphInvariants.sol";
+import {vertexExt} from "./libraries/vertexExt.sol";
+import {edgesExt} from "./libraries/edgesExt.sol";
 import {stringToBytes32Parser} from "./libraries/stringToBytes32Parser.sol";
 import {bytes32ToStringParser} from "./libraries/bytes32ToStringParser.sol";
-
-contract graphStorage is graphTypes, graphInvariants {
-    using stringToBytes32Parser for string;
+import {IgraphStorage} from "./interfaces/IgraphStorage.sol";
+contract graphStorage is IgraphStorage, graphTypes {
+    using stringToBytes32Parser for *;
     using bytes32ToStringParser for bytes32;
 
+    using vertexExt for string[];
+    using edgesExt for string[][];
+
+    Graph internal graphState;
+
     constructor() {}
+    /**
+     * @dev Initializes the graph with a given set of vertices and edges.
+     *      The graph is validated, and any invalid vertices or edges are removed.
+     * @param _vertices An array of vertices, where each vertex is represented as a string.
+     * @param _edges An array of edges, where each edge is represented as an array of two strings, representing the two vertices that the edge connects.
+     */
     function initialize(
         string[] memory _vertices,
         string[][] memory _edges
     ) public {
-        uint256 vertexCount = _vertices.length;
-        uint256 edgeCount = _edges.length;
-        bytes32[] memory encodedVertices = new bytes32[](vertexCount);
-        bytes32[][] memory encodedEdges = new bytes32[][](edgeCount);
+        setVertices(_vertices);
+        setEdges(_edges, graphState.vertices);
+        setId();
+    }
 
-        for (uint256 i = 0; i < vertexCount; i++) {
-            encodedVertices[i] = _vertices[i].stringToBytes32();
-        }
-        for (uint256 i = 0; i < edgeCount; i++) {
-            encodedEdges[i] = new bytes32[](_edges[i].length);
-            for (uint256 j = 0; j < _edges[i].length; j++) {
-                encodedEdges[i][j] = _edges[i][j].stringToBytes32();
-            }
-        }
-        validateVertices(encodedVertices);
-        validateEdges(encodedEdges);
+    /**
+     * @dev Sets the vertices of the graph.
+     * @param _vertices An array of vertices, where each vertex is represented as a bytes32 value.
+     */
+    function setVertices(string[] memory _vertices) internal {
+        bytes32[] memory validVertices = _vertices.validVertices();
+        graphState.vertices = validVertices;
+    }
+
+    /**
+     * @dev Sets the edges of the graph.
+     * @param _edges An array of edges, where each edge is represented as a bytes32[][] value.
+     */
+    function setEdges(
+        string[][] memory _edges,
+        bytes32[] memory validVertices
+    ) internal {
+        bytes32[][] memory validEdges = _edges.validEdges(validVertices);
+        graphState.edges = validEdges;
+    }
+
+    /**
+     * @dev Sets the ID of the graph based on its current state.
+     *      The ID is computed by hashing the current vertices and edges.
+     */
+    function setId() internal {
+        graphState.id = uint256(
+            keccak256(abi.encode(graphState.vertices, graphState.edges))
+        );
     }
 
     /**
      * @dev Returns the vertices of the graph.
      * @return An array of vertices, where each vertex is represented as a bytes32 value.
      */
-    function getVertices() public view returns (bytes32[] memory) {
+    function _getVertices() public view returns (bytes32[] memory) {
         return graphState.vertices;
     }
 
@@ -45,17 +75,15 @@ contract graphStorage is graphTypes, graphInvariants {
      * @dev Returns the edges of the graph.
      * @return An array of edges, where each edge is represented as an array of two vertices.
      */
-    function getEdges() public view returns (bytes32[][] memory) {
+    function _getEdges() public view returns (bytes32[][] memory) {
         return graphState.edges;
     }
 
     /**
-     * @dev Returns the entire graph as a single bytes32 value.
-     * This is currently unused, but may be useful for future
-     * optimization or verification of the graph.
-     * @return encodedGraph The entire graph as a single bytes32 value.
+     * @dev Returns the ID of the graph.
+     * @return The ID of the graph as a uint256 value.
      */
-    function getEncodedGraph() public view returns (bytes32 encodedGraph) {
-        encodedGraph = graphState.encodedGraph;
+    function getId() public view returns (uint256) {
+        return graphState.id;
     }
 }
