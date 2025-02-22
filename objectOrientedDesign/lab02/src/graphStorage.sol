@@ -7,12 +7,16 @@ import {edgesExt} from "./libraries/edgesExt.sol";
 import {stringToBytes32Parser} from "./libraries/stringToBytes32Parser.sol";
 import {bytes32ToStringParser} from "./libraries/bytes32ToStringParser.sol";
 import {IgraphStorage} from "./interfaces/IgraphStorage.sol";
+import {bytes32ArrayExt} from "./libraries/bytes32ArrayExt.sol";
+import {bytes32Ext} from "./libraries/bytes32Ext.sol";
+
 contract graphStorage is IgraphStorage, graphTypes {
     using stringToBytes32Parser for *;
-    using bytes32ToStringParser for bytes32;
-
-    using vertexExt for string[];
-    using edgesExt for string[][];
+    using bytes32ToStringParser for *;
+    using bytes32Ext for *;
+    using bytes32ArrayExt for *;
+    using vertexExt for *;
+    using edgesExt for *;
 
     Graph internal graphState;
 
@@ -33,12 +37,37 @@ contract graphStorage is IgraphStorage, graphTypes {
     }
 
     /**
+     * @dev Removes a given vertex from the graph.
+     *      The function checks if the vertex is in the graph and if it is connected to any edges.
+     *      If it is connected to any edges, the edges are removed from the graph.
+     * @param _vertex The vertex to be removed, represented as a string.
+     */
+    function removeVertex(string memory _vertex) public {
+        //verify if the valid vertex is in the vertex array
+        bytes32 encodedUpperVertex = _vertex
+            .stringToBytes32()
+            .upperCapEncodedString();
+        if (_getVertices().searchBytes32(encodedUpperVertex)) {
+            //verify if the vertex is connected to any edges
+            bytes32[][] memory currentEdges = _getEdges();
+            bytes32[][] memory edgesToBeRemoved = currentEdges.sharedEdges(
+                encodedUpperVertex
+            );
+            // remove the edges connected to the vertex
+            graphState.edges = edgesToBeRemoved.removeEdges(currentEdges);
+        }
+    }
+
+    /**
      * @dev Sets the vertices of the graph.
      * @param _vertices An array of vertices, where each vertex is represented as a bytes32 value.
      */
     function setVertices(string[] memory _vertices) internal {
-        bytes32[] memory validVertices = _vertices.validVertices();
+        bytes32[] memory validVertices = _vertices.validVertices().diff(
+            graphState.vertices
+        );
         graphState.vertices = validVertices;
+        setId();
     }
 
     /**

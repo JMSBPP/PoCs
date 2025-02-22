@@ -68,4 +68,11 @@ contract graphCalculatorv1 is graphCalculatorStorage {
             }
         }
     }
+
+    function assignUnary(
+        string memory newName,
+        string memory name,
+        bytes1 _operator,
+        string[] memory _vertices
+    ) public {}
 }

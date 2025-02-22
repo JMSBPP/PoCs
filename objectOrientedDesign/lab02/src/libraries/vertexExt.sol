@@ -27,4 +27,37 @@ library vertexExt {
             .upperCapEncodedStringArray()
             .removeDuplicatesBytes32Array();
     }
+
+    /// @notice Returns the difference between two arrays of vertices.
+    /// @dev The function takes two arrays of vertices and returns a new array
+    /// containing all the vertices that are in the first array but not in the second.
+    /// @param _vertices1 The first array of vertices.
+    /// @param _vertices2 The second array of vertices.
+    /// @return _vertices1MinusVertices2 The difference between the two arrays.
+    function diff(
+        bytes32[] memory _vertices1,
+        bytes32[] memory _vertices2
+    ) external returns (bytes32[] memory _vertices1MinusVertices2) {
+        uint256 count = 0;
+        bytes32[] memory tempDiff = new bytes32[](_vertices1.length);
+
+        for (uint256 i = 0; i < _vertices1.length; i++) {
+            bool found = false;
+            for (uint256 j = 0; j < _vertices2.length; j++) {
+                if (_vertices1[i] == _vertices2[j]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                tempDiff[count] = _vertices1[i];
+                count++;
+            }
+        }
+
+        _vertices1MinusVertices2 = new bytes32[](count);
+        for (uint256 k = 0; k < count; k++) {
+            _vertices1MinusVertices2[k] = tempDiff[k];
+        }
+    }
 }

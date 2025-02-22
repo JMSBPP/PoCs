@@ -34,9 +34,13 @@ library edgesExt {
     }
 
     // Helper function to sort edges alphabetically
+    /// @notice Sorts the given list of edges alphabetically.
+    /// @dev This function is used to sort the edges before comparing them.
+    /// @param _edges The list of edges to be sorted.
+    /// @return _sortedEdges The sorted list of edges.
     function sortEdges(
         string[][] memory _edges
-    ) external returns (string[][] memory) {
+    ) external returns (string[][] memory _sortedEdges) {
         // Bubble sort for simplicity (replace with a more efficient algorithm if needed)
         for (uint256 i = 0; i < _edges.length; i++) {
             for (uint256 j = i + 1; j < _edges.length; j++) {
@@ -52,6 +56,46 @@ library edgesExt {
         return _edges;
     }
 
+    /// @notice Gets the edges connected to the given vertex.
+    /// @dev This function is used by the removeVertex function to filter out the edges that are connected to the removed vertex.
+    /// @param currentEdges The current list of edges in the graph.
+    /// @param _vertex The vertex to be removed.
+    /// @return _sharedEdges The list of edges connected to the given vertex.
+    function sharedEdges(
+        bytes32[][] memory currentEdges,
+        bytes32 _vertex
+    ) external returns (bytes32[][] memory _sharedEdges) {
+        uint count = 0;
+
+        // Count edges connected to the given vertex
+        for (uint i = 0; i < currentEdges.length; i++) {
+            if (
+                currentEdges[i][0] == _vertex || currentEdges[i][1] == _vertex
+            ) {
+                count++;
+            }
+        }
+
+        // Allocate memory for filtered edges
+        _sharedEdges = new bytes32[][](count);
+        uint index = 0;
+
+        // Store only the edges connected to the vertex
+        for (uint i = 0; i < currentEdges.length; i++) {
+            if (
+                currentEdges[i][0] == _vertex || currentEdges[i][1] == _vertex
+            ) {
+                _sharedEdges[index] = currentEdges[i];
+                index++;
+            }
+        }
+    }
+
+    /// @notice Compares two edges lexicographically.
+    /// @dev This function is used to sort the edges alphabetically.
+    /// @param edge1 The first edge to be compared.
+    /// @param edge2 The second edge to be compared.
+    /// @return True if edge1 is lexicographically greater than edge2, false otherwise.
     function compareEdges(
         string[] memory edge1,
         string[] memory edge2
@@ -69,5 +113,12 @@ library edgesExt {
         return
             keccak256(abi.encodePacked(edge1[1])) >
             keccak256(abi.encodePacked(edge2[1]));
+    }
+
+    function removeEdges(
+        bytes32[][] memory _edgesToRemove,
+        bytes32[][] memory _edges
+    ) public {
+        //
     }
 }
