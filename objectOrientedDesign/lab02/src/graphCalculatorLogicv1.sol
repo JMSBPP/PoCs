@@ -69,10 +69,30 @@ contract graphCalculatorv1 is graphCalculatorStorage {
         }
     }
 
+    //Assigns the value of a binary operation to a variable
+    // a = b op v*
+    //The operator characters are: '+' adding a edge between two vertices, '-' removing a edge between two vertex
+    // '?' checking if a graph contains the given vertices
+    // 'p' return the graph with a path that passes through all the vertices in the indicated order
+
+
     function assignUnary(
         string memory newName,
         string memory name,
         bytes1 _operator,
         string[] memory _vertices
-    ) public {}
+    ) public {
+        assembly{
+            switch (_operator) {
+                case 0x2b: // '+'
+                    setVertices(_vertices)
+                case 0x2d: // '-'
+                    removeVertices(_vertices)
+                case 0x3f: // '?'
+                    
+                case 0x70: // 'p'
+                    // Implement path finding logic here
+            }
+        }
+    }
 }

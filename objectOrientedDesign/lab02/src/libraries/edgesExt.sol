@@ -115,10 +115,60 @@ library edgesExt {
             keccak256(abi.encodePacked(edge2[1]));
     }
 
+    /// @notice Removes specified edges from the list of edges.
+    /// @dev This function iterates over the list of edges and excludes those found in the _edgesToRemove list.
+    /// @param _edgesToRemove The list of edges to be removed.
+    /// @param _edges The current list of edges.
+    /// @return remainingEdges The list of edges after removal.
     function removeEdges(
         bytes32[][] memory _edgesToRemove,
         bytes32[][] memory _edges
-    ) public {
-        //
+    ) public pure returns (bytes32[][] memory) {
+        uint count = 0;
+
+        // Count edges that will remain after removal
+        for (uint i = 0; i < _edges.length; i++) {
+            bool toRemove = false;
+            for (uint j = 0; j < _edgesToRemove.length; j++) {
+                if (
+                    (_edges[i][0] == _edgesToRemove[j][0] &&
+                        _edges[i][1] == _edgesToRemove[j][1]) ||
+                    (_edges[i][0] == _edgesToRemove[j][1] &&
+                        _edges[i][1] == _edgesToRemove[j][0])
+                ) {
+                    toRemove = true;
+                    break;
+                }
+            }
+            if (!toRemove) {
+                count++;
+            }
+        }
+
+        // Create a new array for remaining edges
+        bytes32[][] memory remainingEdges = new bytes32[][](count);
+        uint index = 0;
+
+        // Populate the new array with edges not marked for removal
+        for (uint i = 0; i < _edges.length; i++) {
+            bool toRemove = false;
+            for (uint j = 0; j < _edgesToRemove.length; j++) {
+                if (
+                    (_edges[i][0] == _edgesToRemove[j][0] &&
+                        _edges[i][1] == _edgesToRemove[j][1]) ||
+                    (_edges[i][0] == _edgesToRemove[j][1] &&
+                        _edges[i][1] == _edgesToRemove[j][0])
+                ) {
+                    toRemove = true;
+                    break;
+                }
+            }
+            if (!toRemove) {
+                remainingEdges[index] = _edges[i];
+                index++;
+            }
+        }
+
+        return remainingEdges;
     }
 }

@@ -12,6 +12,7 @@ contract graphCalculatorUnitTest is Test {
         calculator = new graphCalculatorv1();
     }
 
+    /// @notice Test that a graph name can be created
     function testShouldCreateNameUnit() external {
         //pre
         assertFalse(calculator.nameExists("HELLO"));
@@ -19,6 +20,7 @@ contract graphCalculatorUnitTest is Test {
         //post
         assertTrue(calculator.nameExists("HELLO"));
     }
+    /// @notice Test that a graph name cannot be created twice
     function testShouldNotCreateNameUnit() external {
         //pre
         calculator.create("HELLO");
@@ -28,9 +30,9 @@ contract graphCalculatorUnitTest is Test {
         calculator.create("HELLO");
     }
 
+    /// @notice Test that a graph can be assigned to a name
+    /// @dev Test that a graph can be assigned to a name
     function testShouldAssignNameToGraphUnit() external {
-        //pre
-
         calculator.create("HELLO");
         string[] memory vertices = new string[](3);
         vertices[0] = "sAS";
@@ -44,7 +46,7 @@ contract graphCalculatorUnitTest is Test {
         edges[1][0] = "OPo";
         edges[1][1] = "acasa";
         calculator.assign("HELLO", vertices, edges);
-        calculator.getGraph("HELLO");
         //post
+        calculator.getGraph("HELLO");
     }
 }

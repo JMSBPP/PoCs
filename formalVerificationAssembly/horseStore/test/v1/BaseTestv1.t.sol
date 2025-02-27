@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IHorseStore} from "../../src/v1/interfaces/IHorseStore.sol";
 import {HorseStore} from "../../src/v1/HorseStore.sol";
-import {Test, console2} from "@forge-std/Test.sol";
+import {Test, console2} from "../../lib/forge-std/src/Test.sol";
 abstract contract BaseTestV1 is Test {
     IHorseStore public horseStore;
 
