@@ -5,7 +5,7 @@ import {Base_Test, console2} from "./Base_Test.t.sol";
 import {MathMasters} from "src/MathMasters.sol";
 
 contract MathMastersTest is Base_Test {
-    function testMulWad() public {
+    function testMulWadUnit() public {
         assertEq(MathMasters.mulWad(2.5e18, 0.5e18), 1.25e18);
         assertEq(MathMasters.mulWad(3e18, 1e18), 3e18);
         assertEq(MathMasters.mulWad(369, 271), 0);
@@ -19,7 +19,7 @@ contract MathMastersTest is Base_Test {
         assert(MathMasters.mulWad(x, y) == (x * y) / 1e18);
     }
 
-    function testMulWadUp() public {
+    function testMulWadUpUnit() public {
         assertEq(MathMasters.mulWadUp(2.5e18, 0.5e18), 1.25e18);
         assertEq(MathMasters.mulWadUp(3e18, 1e18), 3e18);
         assertEq(MathMasters.mulWadUp(369, 271), 1);
@@ -42,7 +42,7 @@ contract MathMastersTest is Base_Test {
         // depending on whether you want to consider such an overflow case as passing or failing.
     }
 
-    function testSqrt() public {
+    function testSqrtUnit() public {
         assertEq(MathMasters.sqrt(0), 0);
         assertEq(MathMasters.sqrt(1), 1);
         assertEq(MathMasters.sqrt(2704), 52);

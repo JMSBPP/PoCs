@@ -25,7 +25,7 @@ library MathMasters {
     // History lesson: WAD, RAY, and RAD were introduced in DappHub/DappTools/the DS test system and popularized by MakerDAO's original DAI system. The names sort of stuck.
     // https://github.com/dapphub
     // wad: fixed point decimal with 18 decimals (for basic quantities, e.g. balances)
-    // ray: fixed point decimal with 27 decimals (for precise quantites, e.g. ratios)
+    // ray: fixed point deci    mal with 27 decimals (for precise quantites, e.g. ratios)
     // rad: fixed point decimal with 45 decimals (result of integer multiplication with a wad and a ray)
 
     /*//////////////////////////////////////////////////////////////
@@ -38,8 +38,25 @@ library MathMasters {
         assembly {
             // Equivalent to `require(y == 0 || x <= type(uint256).max / y)`.
             if mul(y, gt(x, div(not(0), y))) {
-                mstore(0x40, 0xbac65e5b) // `MathMasters__MulWadFailed()`.
-                revert(0x1c, 0x04)
+                //overwring memory pointer
+                //BEFORE:
+                //mstore(0x40,0xbac65e5b)
+                //revert(0x1c, 0x04)
+                //AFTER
+                let fmptr := mload(0x40)
+                //fmptr := 0x80
+                //@audit selector is not correct:
+                //BEFORE:
+                //0xbac65e5b -> MulWaldFailed()
+                // mstore(fmptr, 0xbac65e5b) // `MathMasters__MulWadFailed()`.
+                //AFTER
+                //0xa56044f7 -> MathMasters__MulWadFailed()
+                mstore(fmptr, 0xa56044f7)
+                //MEMORY
+                //[0x00: .., ...,fmptr: 0x000000000bac65e5b]
+                let actualError := add(fmptr, 0x1c)
+                let errorSelector := 0x04
+                revert(actualError, errorSelector)
             }
             z := div(mul(x, y), WAD)
         }
@@ -54,7 +71,10 @@ library MathMasters {
                 mstore(0x40, 0xbac65e5b) // `MathMasters__MulWadFailed()`.
                 revert(0x1c, 0x04)
             }
-            if iszero(sub(div(add(z, x), y), 1)) { x := add(x, 1) }
+            //BEFORE:
+            // if iszero(sub(div(add(z, x), y), 1)) {
+            //     x := add(x, 1)
+            // }
             z := add(iszero(iszero(mod(mul(x, y), WAD))), div(mul(x, y), WAD))
         }
     }
