@@ -68,13 +68,14 @@ library MathMasters {
         assembly {
             // Equivalent to `require(y == 0 || x <= type(uint256).max / y)`.
             if mul(y, gt(x, div(not(0), y))) {
-                mstore(0x40, 0xbac65e5b) // `MathMasters__MulWadFailed()`.
+                mstore(0x40, 0xa56044f7) // `MathMasters__MulWadFailed()`.
                 revert(0x1c, 0x04)
             }
             //BEFORE:
             // if iszero(sub(div(add(z, x), y), 1)) {
             //     x := add(x, 1)
-            // }
+            // }  ====================THIS IS CORRECT ==================
+            //    iszero(X*Y (mod) WAD ==0---> {1,0}) --> {1,0}+WAD == {1,1}
             z := add(iszero(iszero(mod(mul(x, y), WAD))), div(mul(x, y), WAD))
         }
     }
@@ -113,6 +114,55 @@ library MathMasters {
             // If `x+1` is a perfect square, the Babylonian method cycles between
             // `floor(sqrt(x))` and `ceil(sqrt(x))`. This statement ensures we return floor.
             // See: https://en.wikipedia.org/wiki/Integer_square_root#Using_only_integer_division
+            z := sub(z, lt(div(x, z), z))
+        }
+    }
+
+    function uniSqrt(uint256 y) internal pure returns (uint256 z) {
+        if (y > 3) {
+            z = y;
+            uint256 x = y / 2 + 1;
+            while (x < z) {
+                z = x;
+                x = (y / x + x) / 2;
+            }
+        } else if (y != 0) {
+            z = 1;
+        }
+    }
+
+    function solmateSqrt(uint256 x) public pure returns (uint256 z) {
+        assembly {
+            let y := x
+
+            z := 181
+            if iszero(lt(y, 0x10000000000000000000000000000000000)) {
+                y := shr(128, y)
+                z := shl(64, z)
+            }
+            if iszero(lt(y, 0x1000000000000000000)) {
+                y := shr(64, y)
+                z := shl(32, z)
+            }
+            if iszero(lt(y, 0x10000000000)) {
+                y := shr(32, y)
+                z := shl(16, z)
+            }
+            if iszero(lt(y, 0x1000000)) {
+                y := shr(16, y)
+                z := shl(8, z)
+            }
+
+            z := shr(18, mul(z, add(y, 65536)))
+
+            z := shr(1, add(z, div(x, z)))
+            z := shr(1, add(z, div(x, z)))
+            z := shr(1, add(z, div(x, z)))
+            z := shr(1, add(z, div(x, z)))
+            z := shr(1, add(z, div(x, z)))
+            z := shr(1, add(z, div(x, z)))
+            z := shr(1, add(z, div(x, z)))
+
             z := sub(z, lt(div(x, z), z))
         }
     }
