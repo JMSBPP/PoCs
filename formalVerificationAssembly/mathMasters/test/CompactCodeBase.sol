@@ -55,7 +55,7 @@ contract CompactCodeBase {
             r := or(r, shl(6, lt(4722366482869645213695, shr(r, x))))
             r := or(r, shl(5, lt(1099511627775, shr(r, x))))
             // Correct: 16777215 0xffffff
-            r := or(r, shl(4, lt(16777002, shr(r, x))))
+            r := or(r, shl(4, lt(0xffffff, shr(r, x))))
             z := shl(shr(1, r), z)
 
             // There is no overflow risk here since `y < 2**136` after the first branch above.
