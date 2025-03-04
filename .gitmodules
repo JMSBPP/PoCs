@@ -13,3 +13,6 @@
 [submodule "objectOrientedDesign/designPatterns/strategyPattern/lib/forge-std"]
 	path = objectOrientedDesign/designPatterns/strategyPattern/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "objectOrientedDesign/maxwellContainer/contracts/lib/forge-std"]
+	path = objectOrientedDesign/maxwellContainer/contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
