@@ -2,5 +2,13 @@
 src = "src"
 out = "out"
 libs = ["lib"]
-remappings = ["@math/=lib/openzeppelin-contracts/contracts/utils/math/"]
+remappings = [
+    "@math/=lib/openzeppelin-contracts/contracts/utils/math/",
+    "@shapes/=src/shapes/",
+    "@maxwellContainer/=src/maxwellContainer/",
+    "@chambers/=src/chambers/",
+    "@forge-std/=lib/forge-std/src/",
+    "@types/=src/types/",
+    "@demons/=src/demons/",
+]
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

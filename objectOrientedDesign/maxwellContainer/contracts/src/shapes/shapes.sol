@@ -1,40 +1,16 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-struct Point {
-    int256 x;
-    int256 y;
-}
+import "./interfaces/IshapesCanvas.sol";
+import {IRectangle} from "./interfaces/IRectangle.sol";
+import {ICircle} from "./interfaces/ICircle.sol";
 
-struct Size {
-    uint256 height;
-    uint256 width;
-}
-
-abstract contract shapesAPI {
+contract shapesCanvas is IshapesCanvas {
     Point internal bottomLetfCoordinate;
     //NOTE: encoded color name OR
     //we can also do the front end color conversion here
     bytes32 internal color;
     bool internal isVisible;
-
-    /**
-     * @dev Sets the position of the rectangle by updating its bottom left coordinate.
-     * @param x The x-coordinate of the bottom left corner.
-     * @param y The y-coordinate of the bottom left corner.
-     */
-    function setPosition(int256 x, int256 y) public {
-        bottomLetfCoordinate = Point({x: x, y: y});
-    }
-    /**
-     * @dev Returns the position of the rectangle as its bottom left coordinate.
-     * @return x The x-coordinate of the bottom left corner.
-     * @return y The y-coordinate of the bottom left corner.
-     */
-    function getPosition() public view returns (int256 x, int256 y) {
-        x = bottomLetfCoordinate.x;
-        y = bottomLetfCoordinate.y;
-    }
 
     /**
      * @dev Sets the color of the rectangle.
@@ -73,8 +49,8 @@ abstract contract shapesAPI {
  *
  */
 
-abstract contract Rectangle is shapesAPI {
-    Size private size;
+contract Rectangle is shapesCanvas, IRectangle {
+    Size internal size;
 
     constructor() {
         //NOTE: Starts in white
@@ -82,13 +58,8 @@ abstract contract Rectangle is shapesAPI {
         isVisible = true;
     }
 
-    /**
-     * @dev Sets the size of the rectangle.
-     * @param height The new height of the rectangle.
-     * @param width The new width of the rectangle.
-     */
-    function setSize(uint256 height, uint256 width) public {
-        size = Size({height: height, width: width});
+    function setSize(uint256 _width, uint256 _height) public {
+        size = Size({width: _width, height: _height});
     }
 
     /**
@@ -102,7 +73,7 @@ abstract contract Rectangle is shapesAPI {
     }
 }
 
-abstract contract Circle is shapesAPI {
+contract Circle is shapesCanvas, ICircle {
     uint256 private constant WAD = 18;
     //NOTE: PI with 18 decimal precision
     uint256 private constant PI = 3141592653589793238;
