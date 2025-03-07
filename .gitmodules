@@ -19,3 +19,6 @@
 [submodule "objectOrientedDesign/maxwellContainer/contracts/lib/openzeppelin-contracts"]
 	path = objectOrientedDesign/maxwellContainer/contracts/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "solidityBootcamp/ctf/lib/forge-std"]
+	path = solidityBootcamp/ctf/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
