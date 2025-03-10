@@ -1,0 +1,34 @@
+//wee need to be 0.8.17 compatible
+//follow the interface
+
+/*
+    interface Isolution {
+        function solution() external pure returns (uint8);
+    }
+*/
+// Inputs to the CONSTRUCTOR macro are provided at compile time.
+//   Does this offer optimizations compared to runtime??
+
+
+#define function solution() pure returns (uint8)
+
+
+#define macro MAIN() = takes(0) returns(0) {
+    //load function selector
+    0x00 calldataload //stack [calldata[:]]
+    0xe0 shr        //stack [function_sig]
+
+    //jump to correct function
+    __FUNC_SIG(solution) eq                //stack [selector]
+    solution jumpi                        //stack []
+
+    //return constant
+    solution:
+        0x02a 0x00
+        //stack [offset, value] 
+        mstore //[] memory
+        0x20 0x00 return
+        //need to pass this return value to return value
+}
+
+

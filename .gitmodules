@@ -25,3 +25,6 @@
 [submodule "solidityBootcamp/ctf/lib/foundry-huff"]
 	path = solidityBootcamp/ctf/lib/foundry-huff
 	url = https://github.com/huff-language/foundry-huff
+[submodule "solidityBootcamp/ctf/lib/openzeppelin-contracts"]
+	path = solidityBootcamp/ctf/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts

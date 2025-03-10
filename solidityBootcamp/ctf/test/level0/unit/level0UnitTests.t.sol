@@ -10,8 +10,10 @@ contract level0UnitTests is Test {
         level0 = new Level0Template();
     }
 
-    function testShouldReturn42() public returns (uint8) {
+    function testShouldReturn42() public returns (bytes memory runtime) {
         uint8 res = level0.solution();
+        runtime = vm.getDeployedCode("solution.sol:Level0Template");
+
         assertEq(res, uint8(42));
     }
 }

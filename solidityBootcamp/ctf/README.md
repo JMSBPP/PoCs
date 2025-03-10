@@ -1,66 +1,61 @@
-## Foundry
+## Level 0 - Return 42 (tutorial)
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+This level is really simple. Use the interface below to write a smart contract. Your contract should contain a function called solution that returns a uint8. In this case the function body logic is very simply as the answer is always 42.
 
-Foundry consists of:
+Interface:
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.17;
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+interface Isolution {
+    function solution() external pure returns (uint8);
+}
+```
+Solution:
+To solve we need write the function to return the correct answer. In this case we would just need to write return 42
 
-## Documentation
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.17;
 
-https://book.getfoundry.sh/
+contract Level_0 {
 
-## Usage
-
-### Build
-
-```shell
-$ forge build
+  function solution() external pure returns (uint8){
+      return 42;
+    }
+}
 ```
 
-### Test
+## Level 1 - Matrix Addition
 
-```shell
-$ forge test
+
+Write a function that adds two matrices returns the result. To keep things simple the array sizes will be fixed sizes of 2x3 (uint256[2][3]). Take a look at Wikipedia if you need help understanding matrix addition. Your solution should implement the following interface:
+
+
+```solidity
+interface Isolution1 {
+    function solution(
+        uint256[2][3] calldata x, 
+        uint256[2][3] calldata y
+    ) external pure returns (
+        uint256[2][3] memory
+    );
+}
 ```
 
-### Format
+Notes:
 
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+    "0x0": "0x2ff2cc2500000000000000000000000000000000000000000000000000000000",
+    // selector --> bytes4
+    "0x20": "0x0000000100000000000000000000000000000000000000000000000000000000",
+    "0x40": "0x0000000200000000000000000000000000000000000000000000000000000000",
+    "0x60": "0x0000000300000000000000000000000000000000000000000000000000000000",
+    "0x80": "0x0000000400000000000000000000000000000000000000000000000000000000",
+    "0xa0": "0x0000000500000000000000000000000000000000000000000000000000000000",
+    "0xc0": "0x0000000600000000000000000000000000000000000000000000000000000000",
+    "0xe0": "0x0000000700000000000000000000000000000000000000000000000000000000",
+    "0x100": "0x0000000800000000000000000000000000000000000000000000000000000000",
+    "0x120": "0x0000000800000000000000000000000000000000000000000000000000000000",
+    "0x140": "0x0000000a00000000000000000000000000000000000000000000000000000000",
+    "0x160": "0x0000000b00000000000000000000000000000000000000000000000000000000",
+    "0x180": "0x0000000c00000000000000000000000000000000000000000000000000000000"
