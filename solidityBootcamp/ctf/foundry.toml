@@ -4,11 +4,12 @@ out = "out"
 libs = ["lib"]
 remappings = [
     "@forge-std/=lib/forge-std/src/",
-    "@level0/=src/level0",
-    "@level1/=src/level1",
+    "@level0/=src/level0/",
+    "@level1/=src/level1/",
     "@huff/=lib/foundry-huff/src/",
     "@math/=lib/openzeppelin-contracts/contracts/utils/math/",
     "@arrays/=lib/openzeppelin-contracts/contracts/utils/",
+    "@level2/=src/level2/"
 ]
 ffi = true
 
