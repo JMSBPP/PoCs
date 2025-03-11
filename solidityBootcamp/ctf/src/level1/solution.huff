@@ -7,56 +7,49 @@
 
 #define function solution(uint256[2][3] calldata,uint256[2][3] calldata) pure returns (uint256[2][3] memory)
 
+#define macro UPDATE_MATRIX_POINTERS() = takes(2) returns(3){
+    
+    0x20 add               //[ptr1 +=0x20,ptr2]
+    swap1                  //[ptr2, ptr1+=0x20]                
+    0x20 add               //[ptr2+=0x20,ptr1+=0x20]
+    swap1                  //[ptr1+=0x20,ptr2+=0x20]
+    dup1                   //[ptr1+=0x20,ptr1+=0x20, ptr2+=0x20]
+    0x0140 eq              //[0x0140, ptr1+=0x20, ptr1+=0x20, ptr2+=0x20]  
+    returnMatrixEnd jumpi
 
 
-#define macro ADD_MATRIX() = takes(3) returns(0){
+    dup1                  //[ptr1+=0x20, ptr1+=0x20, ptr2+=0x20]
+    LOAD_VALUES()
 
-    mload         //[m1[1][1], ptr1, ptr2]
-    0x00 mstore            //[ptr1, ptr2]
-    0x20 add               //[ptr1 +=0x20, ptr2]
-    swap1 
-    dup1                   //[ptr2,ptr2, ptr1]
-    mload         //[m2[1][1],ptr2, ptr1]
-    0x20 mstore            //[ptr2, ptr1]
-    0x20 add               //[ptr2+=0x20,ptr1]
-    swap1 dup1    //[ptr1,ptr1, ptr2]
-    0x00 mload //[0x00001]
-    0x20 mload //[0x00007,0x00001]
-    add
-    0x40 mload //[fptr, 0x00008 , ptr1, ptr1, ptr2]
-    mstore //[ptr1, ptr1, ptr2]
-    0x40 mload 
-    0x20 add
-    0x40 mstore
-    ADD_MATRIX2()
+
 
 }
-#define macro ADD_MATRIX2() = takes(3) returns(0){
 
-    mload         //[m1[1][1], ptr1, ptr2]
+#define macro LOAD_VALUES() = takes(3) returns(2){
+    mload                  //[m1[1][1], ptr1, ptr2]
     0x00 mstore            //[ptr1, ptr2]
-    0x20 add               //[ptr1 +=0x20, ptr2]
-    swap1 
-    dup1                   //[ptr2,ptr2, ptr1]
-    mload         //[m2[1][1],ptr2, ptr1]
-    0x20 mstore            //[ptr2, ptr1]
-    0x20 add               //[ptr2+=0x20,ptr1]
-    swap1 dup1    //[ptr1,ptr1, ptr2]
-    0x00 mload //[0x00001]
-    0x20 mload //[0x00007,0x00001]
+    swap1                  //[ptr2, ptr1]
+    dup1                   //[ptr2, ptr2, ptr1]
+    mload                  //[m2[1][1], ptr2, ptr1]
+    0x20 mstore            //[ptr2, ptr1] 
+    swap1                  //[ptr1, ptr2]
+    
+    ADD_VALUES() 
+}
+
+#define macro ADD_VALUES() = takes(2) returns(2){
+
+    0x00 mload                 //[0x00001]
+    0x20 mload                 //[0x00007,0x00001]
     add
-    0x40 mload //[fptr, 0x00008 , ptr1, ptr1, ptr2]
-    mstore //[ptr1, ptr1, ptr2]
+    0x40 mload                 //[fptr, 0x00008, ptr1, ptr2]
+    mstore                     //[ptr1, ptr2]
     0x40 mload 
     0x20 add
-    0x40 mstore
-    
-    
-    0x40
-    0x40 mload
-    return
-
+    0x40 mstore               //[ptr1, ptr2]
+    UPDATE_MATRIX_POINTERS()
 }
+
 
 
 #define macro MAIN() = takes(0) returns(0){
@@ -71,15 +64,15 @@
  // CALLDATACOPY  memoryOffset offset size
 
     //MEMORY [0x80: (m1, m2)]
-    //[func_sig]
-    0x40 mload 
-    0x0180 add 
+    //[func_sig] 
+    0x0240  
     0x40 mstore 
     //[func_sign]
     //jump to correct function
     __FUNC_SIG(solution) eq                //stack [selector]
     solution jumpi                        //stack []
 
+    0x00 0x00 revert
     
     solution:
         
@@ -87,6 +80,12 @@
         0x80
         dup1 //[ptr1, ptr1, ptr2]
         
-        ADD_MATRIX()
+        LOAD_VALUES()
 
+    returnMatrixEnd:
+        pop pop
+        0xc0
+        0x40 mload
+        return
+        stop
 }
