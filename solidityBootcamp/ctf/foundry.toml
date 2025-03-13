@@ -9,7 +9,8 @@ remappings = [
     "@huff/=lib/foundry-huff/src/",
     "@math/=lib/openzeppelin-contracts/contracts/utils/math/",
     "@arrays/=lib/openzeppelin-contracts/contracts/utils/",
-    "@level2/=src/level2/"
+    "@level2/=src/level2/",
+    "@level3/=src/level3/",
 ]
 ffi = true
 
