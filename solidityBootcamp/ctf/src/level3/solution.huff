@@ -1,0 +1,32 @@
+/*
+    interface Isolution {
+        function solution() external pure returns (uint8);
+    }
+*/
+
+
+#define function solution(bytes memory) pure returns (uint16, bool, bytes6)
+
+#define macro MAIN() = takes(0) returns(0){
+    0x00 calldataload
+    0xe0 shr
+    __FUNC_SIG(solution) eq                //stack [selector]
+    solution jumpi
+
+    0x00 0x00 revert
+    
+    solution:
+        0xa0 mload        //[data]
+        dup1              //[data, data]
+        0xb8 shr          //[data2, data]
+        dup1              //[data2, data2, data]
+        0xc8 shl 0x30 shr //[b, data2, data]
+        0x80 mstore       //[data2, data]
+        0xd0 shl          //[c,data]
+        0xa0 mstore       //[data]
+        0xf0 shl          //[a]
+        0xc0 mstore       //[]
+        0x60
+        0x80
+        return
+}
