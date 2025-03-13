@@ -11,6 +11,8 @@ remappings = [
     "@arrays/=lib/openzeppelin-contracts/contracts/utils/",
     "@level2/=src/level2/",
     "@level3/=src/level3/",
+    "@level4/=src/level4/",
+    "@level5/=src/level5/",
 ]
 ffi = true
 

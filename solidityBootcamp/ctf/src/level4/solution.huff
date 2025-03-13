@@ -1,0 +1,80 @@
+/*
+interface Isolution4 {
+    function solution(uint256 number) external pure returns (uint256);
+}
+*/
+
+#define function solution(uint256 number) pure returns (uint256)
+
+
+#define macro MAIN() = takes (0) returns (0) {
+    // Extract function selector and route to solution
+    0x00 calldataload 0xe0 shr
+    __FUNC_SIG("solution(uint256)") eq
+    solution jumpi
+    0x00 0x00 revert // Revert if selector mismatch
+
+    solution:
+        // Load input `number` from calldata
+        0x04 calldataload
+        // Handle zero case
+        dup1 iszero zero_case jumpi
+
+        // Initialize result (MSB position) to 0
+        0x00
+
+        //───────────────────────────────────────────────
+        // Binary search for highest bit (descending)
+        //───────────────────────────────────────────────
+        // Shift 128 bits
+        dup2 0x80 shr dup1 iszero shift_128_skip jumpi
+        swap2 0x80 add swap1 0x80 shr swap1
+    shift_128_skip: pop
+
+        // Shift 64 bits
+        dup1 0x40 shr dup1 iszero shift_64_skip jumpi
+        swap2 0x40 add swap1 0x40 shr swap1
+    shift_64_skip: pop
+
+        // Shift 32 bits
+        dup1 0x20 shr dup1 iszero shift_32_skip jumpi
+        swap2 0x20 add swap1 0x20 shr swap1
+    shift_32_skip: pop
+
+        // Shift 16 bits
+        dup1 0x10 shr dup1 iszero shift_16_skip jumpi
+        swap2 0x10 add swap1 0x10 shr swap1
+    shift_16_skip: pop
+
+        // Shift 8 bits
+        dup1 0x08 shr dup1 iszero shift_8_skip jumpi
+        swap2 0x08 add swap1 0x08 shr swap1
+    shift_8_skip: pop
+
+        // Shift 4 bits
+        dup1 0x04 shr dup1 iszero shift_4_skip jumpi
+        swap2 0x04 add swap1 0x04 shr swap1
+    shift_4_skip: pop
+
+        // Shift 2 bits
+        dup1 0x02 shr dup1 iszero shift_2_skip jumpi
+        swap2 0x02 add swap1 0x02 shr swap1
+    shift_2_skip: pop
+
+        // Shift 1 bit
+        dup1 0x01 shr dup1 iszero shift_1_skip jumpi
+        swap2 0x01 add swap1 0x01 shr swap1
+    shift_1_skip: pop
+
+        //───────────────────────────────────────────────
+        // Finalize and return (1 << result)
+        //───────────────────────────────────────────────
+        0x01 swap1 shl // Compute 2^result
+        0x00 mstore    // Store in memory
+        0x00 0x20 return
+
+    zero_case:
+        // Handle zero input
+        0x00 0x00 mstore
+        0x00 0x20 return
+}
