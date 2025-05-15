@@ -1,3 +1,0 @@
-# Graph Calculator
-
-# Getting Started
