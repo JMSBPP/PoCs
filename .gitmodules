@@ -28,3 +28,6 @@
 [submodule "solidityBootcamp/ctf/lib/openzeppelin-contracts"]
 	path = solidityBootcamp/ctf/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "designPatterns/behaviour/strategy/lib/forge-std"]
+	path = designPatterns/behaviour/strategy/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
