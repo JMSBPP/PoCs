@@ -8,3 +8,9 @@
 `contract.Storage delegateall contract.logic`
 
 What if the logic contract reads a value from storage?
+
+Then:
+
+`Caller{msg.sender}.delegateCall(Called.function())` implies that
+All `msg.sender, msg.value, address(this)` invocations used in `Called.function()` are from `Caller`
+
