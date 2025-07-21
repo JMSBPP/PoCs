@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {ERC1967Proxy} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-
+import {Hooks} from "@uniswap/v4-core/src/libraries/Hooks.sol";
 contract BuggyUUPSProxy is ERC1967Proxy {
     constructor(
         address _implementation,

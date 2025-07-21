@@ -2,18 +2,30 @@
 pragma solidity ^0.8.24;
 
 import "v4-periphery/src/utils/BaseHook.sol";
+import {IPermissionControlSetterHookV1} from "./interfaces/IPermissionControlSetterHookV1.sol";
 import {UUPSUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
 // @dev This Hooks is a Moch of a UUPS compliant hook that changes it's permissions
-// Consider integrating with TimeLockController
-contract PermissionControlSetterHookV1 is BaseHook {
+import {TimeControlledRuggBlocker} from "../TimeControlledRuggBlocker.sol";
+
+contract PermissionControlSetterHookV1 is
+    BaseHook,
+    UUPSUpgradeable,
+    TimeControlledRuggBlocker,
+    IPermissionControlSetterHookV1
+{
+    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+
     uint160 private hookPermissionsX160 =
         uint160((~uint160(0) << uint160(0x14)) | Hooks.BEFORE_INITIALIZE_FLAG);
-
-    event PermissionsUpdated(
-        uint160 prevPermissionsX160,
-        uint160 newPermissionsX160
-    );
-    constructor(IPoolManager _poolManager) BaseHook(_poolManager) {}
+    // // @dev Inherited from SuperDCAGauge
+    address public developerAddress;
+    constructor(
+        IPoolManager _poolManager,
+        address _developerAddress
+    ) BaseHook(_poolManager) TimeControlledRuggBlocker(_developerAddress) {
+        developerAddress = _developerAddress;
+        _grantRole(MANAGER_ROLE, _developerAddress);
+    }
 
     function getHookPermissions()
         public
@@ -50,16 +62,20 @@ contract PermissionControlSetterHookV1 is BaseHook {
         return IHooks.beforeInitialize.selector;
     }
 
-    function _authorizeUpgrade(address _newImplementation) internal override {
-        // This will support future feature additions 
+    function _authorizeUpgrade(
+        address _newImplementation
+    ) internal override onlyRole(MANAGER_ROLE) {
+        // TODO: This is a placeHodler for admin checking
+        // in practice we might want a better check
+        // This will support future feature additions
         // without having to have liquidity providers do migrations.
-
         // Requirements
-        // - Admin upgradable
-        // - Timelock system prevents rugging, 
-        //    gives people at least 72 hours 
+        // - Admin upgradable --> AccessControl
+        // - Timelock system prevents rugging ---> TimeLockController is AccessConntrol,
+        //    gives people at least 72 hours
         //    to withdraw if they disagree with an upgrade by the admin.
-
-Admin pauseable
+        // Admin pauseable
+        // bytes32 id = _calculateUpgradeImplementationId(newImplementation);
+        _scheduleUpgrade(_newImplementation);
     }
 }
