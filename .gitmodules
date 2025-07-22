@@ -73,3 +73,6 @@
 [submodule "designPatterns/proxy/lib/yolo-core-v0"]
 	path = designPatterns/proxy/lib/yolo-core-v0
 	url = https://github.com/YOLO-Protocol/yolo-core-v0
+[submodule "designPatterns/proxy/lib/openzeppelin-foundry-upgrades"]
+	path = designPatterns/proxy/lib/openzeppelin-foundry-upgrades
+	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
