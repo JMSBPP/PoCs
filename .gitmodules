@@ -76,3 +76,8 @@
 [submodule "designPatterns/proxy/lib/openzeppelin-foundry-upgrades"]
 	path = designPatterns/proxy/lib/openzeppelin-foundry-upgrades
 	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
+[submodule "designPatterns/proxy/lib/forge-std"]
+	path = designPatterns/proxy/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "lib/forge-std"]
+	branch = master

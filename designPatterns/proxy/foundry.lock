@@ -1,0 +1,65 @@
+{
+  "../../delegateCall/lib/v4-periphery": {
+    "rev": "ad04c9f24a170accf5ea1b2836bbafd514537ca6"
+  },
+  "../../solidityBootcamp/ctf/lib/foundry-huff": {
+    "rev": "7d1ce15ccf92bd68458c7e28e0ae847b64b4fc74"
+  },
+  "../../solidityBootcamp/ctf/lib/openzeppelin-contracts": {
+    "rev": "dc44c9f1a4c3b10af99492eed84f83ed244203f6"
+  },
+  "../behaviour/strategy/lib/forge-std": {
+    "rev": "77041d2ce690e692d6e03cc812b57d1ddaa4d505"
+  },
+  "lib/openzeppelin-contracts-upgradeable": {
+    "rev": "60b305a8f3ff0c7688f02ac470417b6bbf1c4d27"
+  },
+  "../structural/adapter/lib/v4-periphery": {
+    "rev": "ad04c9f24a170accf5ea1b2836bbafd514537ca6"
+  },
+  "lib/yolo-core-v0": {
+    "rev": "83ed197dac36ed8ea9a4abbb33fed2269096a6f4"
+  },
+  "../../solidityBootcamp/ctf/lib/forge-std": {
+    "rev": "3b20d60d14b343ee4f908cb8079495c07f5e8981"
+  },
+  "../structural/adapter/lib/forge-std": {
+    "rev": "77041d2ce690e692d6e03cc812b57d1ddaa4d505"
+  },
+  "../../solidityBootcamp/homeworks/homework6/lib/forge-std": {
+    "rev": "3b20d60d14b343ee4f908cb8079495c07f5e8981"
+  },
+  "../../formalVerificationAssembly/horseStore/lib/huffmate": {
+    "rev": "4e2c9bd3412ab8cc65f6ceadafc01a1ff1815796"
+  },
+  "lib/uniswap-hooks": {
+    "rev": "e59fe72c110c3862eec9b332530dce49ca506bbb"
+  },
+  "../../delegateCall/lib/forge-std": {
+    "rev": "77041d2ce690e692d6e03cc812b57d1ddaa4d505"
+  },
+  "../../formalVerificationAssembly/horseStore/lib/openzeppelin-contracts": {
+    "rev": "dc44c9f1a4c3b10af99492eed84f83ed244203f6"
+  },
+  "lib/openzeppelin-foundry-upgrades": {
+    "rev": "cbce1e00305e943aa1661d43f41e5ac72c662b07"
+  },
+  "../../formalVerificationAssembly/horseStore/lib/foundry-huff": {
+    "rev": "7d1ce15ccf92bd68458c7e28e0ae847b64b4fc74"
+  },
+  "lib/openzeppelin-contracts": {
+    "rev": "e4f70216d759d8e6a64144a9e1f7bbeed78e7079"
+  },
+  "lib/forge-std": {
+    "branch": {
+      "name": "master",
+      "rev": "60acb7aaadcce2d68e52986a0a66fe79f07d138f"
+    }
+  },
+  "lib/v4-periphery": {
+    "rev": "ad04c9f24a170accf5ea1b2836bbafd514537ca6"
+  },
+  "lib/v4-core": {
+    "rev": "e50237c43811bd9b526eff40f26772152a42daba"
+  }
+}
