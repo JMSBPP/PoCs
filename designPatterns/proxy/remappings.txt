@@ -2,7 +2,7 @@
 @chainlink/contracts/=lib/yolo-core-v0/node_modules/@chainlink/contracts/
 @ensdomains/=lib/v4-core/node_modules/@ensdomains/
 @layerzerolabs/=lib/yolo-core-v0/node_modules/@layerzerolabs/
-@openzeppelin/=lib/yolo-core-v0/node_modules/@openzeppelin/
+@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
 @uniswap/universal-router/=lib/yolo-core-v0/node_modules/@uniswap/universal-router/
 @uniswap/v4-core/=lib/v4-periphery/lib/v4-core/
 @uniswap/v4-periphery/=lib/yolo-core-v0/node_modules/@uniswap/v4-periphery/
@@ -15,8 +15,6 @@ forge-std/=lib/openzeppelin-contracts/lib/forge-std/src/
 halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/
 hardhat/=lib/v4-core/node_modules/hardhat/
 openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/
-openzeppelin-contracts/=lib/openzeppelin-contracts/
-openzeppelin/=lib/uniswap-hooks/lib/openzeppelin-contracts/contracts/
 permit2/=lib/v4-periphery/lib/permit2/
 solmate/=lib/yolo-core-v0/node_modules/solmate/
 uniswap-hooks/=lib/uniswap-hooks/src/
