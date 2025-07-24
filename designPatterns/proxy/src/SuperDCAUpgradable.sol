@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {BaseHookUpgradable, IPoolManager, Hooks} from "./BaseHookUpgradable.sol";
 import {TimelockControllerUpgradeable, Initializable} from "openzeppelin-contracts-upgradeable/contracts/governance/TimelockControllerUpgradeable.sol";
-import {UUPSUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
+import {UUPSUpgradeable, ERC1967Utils} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {EnumerableSet} from "openzeppelin-contracts/contracts/utils/structs/EnumerableSet.sol";
 
 abstract contract SuperDCAUpgradable is
@@ -42,10 +42,12 @@ abstract contract SuperDCAUpgradable is
     error InvalidPoolFee();
     error PoolMustIncludeSuperDCAToken();
 
+    error InvalidUpgradeRequest__OperationStateNotWaiting();
     // UpgradeTimeLock
     /// @custom:storage-location erc7201:openzeppelin.storage.UpgradeTimeController
     struct UpgradeTimeControllerStorage {
         bytes32 upgradeId;
+        uint256 nonce;
     }
 
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.UpgradeTimeController")) - 1)) & ~bytes32(uint256(0xff))
@@ -158,6 +160,7 @@ abstract contract SuperDCAUpgradable is
         SuperDCAStateStorage storage $ = _getSuperDCAStateStorage();
         _grantRole(MANAGER_ROLE, _developerAddress);
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _grantRole(EXECUTOR_ROLE, address(this));
         $.superDCAToken = _superDCAToken;
         $.developerAddress = _developerAddress;
         $.internalFee = INTERNAL_POOL_FEE;
@@ -165,16 +168,54 @@ abstract contract SuperDCAUpgradable is
         $.mintRate = _mintRate;
         $.lastMinted = block.timestamp;
     }
+    // function upgradeToAndCall(
+    //     address newImplementation,
+    //     bytes memory data
+    // ) public payable virtual override onlyProxy {
+    //     _authorizeUpgrade(newImplementation);
+    //     _upgradeToAndCallUUPS(newImplementation, data);
+    // }
+
+    modifier ExcecuteUpgrade() {
+        // NOTE: The excecutor is already the proxy contract
+        _;
+    }
 
     function scheduleUpgrade(
         uint256 delay
     ) external onlyRole(MANAGER_ROLE) returns (bytes32 _upgradeId) {
-        return _scheduleUpgrade(delay);
+        UpgradeTimeControllerStorage
+            storage $ = _getUpgradeTimeControllerStorage();
+        $.nonce++;
+        bytes32 salt = keccak256(
+            abi.encodePacked(_msgSender(), $.nonce, block.timestamp)
+        );
+
+        return _scheduleUpgrade(delay, salt);
     }
 
     function _scheduleUpgrade(
-        uint256 delay
-    ) internal returns (bytes32 _upgradeId) {}
+        uint256 delay,
+        bytes32 salt
+    ) private returns (bytes32 _upgradeId) {
+        schedule(
+            address(this),
+            uint256(0x00),
+            _msgData()[:0],
+            upgradeId(), //Predecessor
+            salt,
+            delay
+        );
+        _upgradeId = hashOperation(
+            address(this),
+            uint256(0x00),
+            _msgData()[:0],
+            upgradeId(),
+            salt
+        );
+
+        _setUpgradeId(_upgradeId);
+    }
 
     /**
      * @notice Returns the hook permissions.
