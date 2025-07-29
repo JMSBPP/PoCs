@@ -1,4 +1,4 @@
-<h1 align="center" style="font-size: 3em;">PROOF OF LEARNING 📚</h1>
+<h1 align="center" style="font-size: 3em;">PoC's 📚</h1>
 
 <p align="center">
   <img src="assets/mainLogo.png" alt="Description" width="1000"/>
