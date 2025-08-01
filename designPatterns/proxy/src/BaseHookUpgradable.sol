@@ -5,10 +5,12 @@ import "v4-periphery/src/utils/BaseHook.sol";
 import {Initializable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 abstract contract BaseHookUpgradable is Initializable, IHooks {
+    using Hooks for IHooks;
     /// @custom:storage-location erc7201:openzeppelin.storage.BaseHook
     struct BaseHookStorage {
         IPoolManager poolManager;
     }
+
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.BaseHook")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant BaseHookStorageLocation =
         0x861b941e576565980ae2c4733bd279798b77120ef3af0164a99ca9eb52c28d00;
@@ -30,10 +32,12 @@ abstract contract BaseHookUpgradable is Initializable, IHooks {
     }
 
     function __BaseHook_init_unchained(
-        IPoolManager _poolManager
+        IPoolManager _poolManager,
+        Hooks.Permissions memory _permissions
     ) internal onlyInitializing {
         BaseHookStorage storage $ = _getBaseHookStorage();
         $.poolManager = _poolManager;
+        $.permissions = _permissions;
         validateHookAddress(this);
     }
 
@@ -41,6 +45,24 @@ abstract contract BaseHookUpgradable is Initializable, IHooks {
         BaseHookStorage storage $ = _getBaseHookStorage();
         return $.poolManager;
     }
+
+    /**
+     * @dev Get the hook permissions to signal which hook functions are to be implemented.
+     *
+     * Used at deployment to validate the address correctly represents the expected permissions.
+     *
+     * @return permissions The hook permissions.
+     */
+    function getHookPermissions()
+        public
+        pure
+        virtual
+        returns (Hooks.Permissions memory permissions)
+    {
+        BaseHookStorage storage $ = _getBaseHookStorage();
+        return $.permissions;
+    }
+
     /**
      * @dev The hook is not the caller.
      */
@@ -90,23 +112,11 @@ abstract contract BaseHookUpgradable is Initializable, IHooks {
     }
 
     /**
-     * @dev Get the hook permissions to signal which hook functions are to be implemented.
-     *
-     * Used at deployment to validate the address correctly represents the expected permissions.
-     *
-     * @return permissions The hook permissions.
-     */
-    function getHookPermissions()
-        public
-        pure
-        virtual
-        returns (Hooks.Permissions memory permissions);
-
-    /**
      * @dev Validate the hook address against the expected permissions.
      */
     function validateHookAddress(BaseHookUpgradable hook) internal pure {
-        Hooks.validateHookPermissions(hook, getHookPermissions());
+        BaseHookStorage storage $ = _getBaseHookStorage();
+        Hooks.validateHookPermissions(hook, $.permissions);
     }
 
     /**
