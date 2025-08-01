@@ -33,7 +33,7 @@ abstract contract DummyTimelockControllerUpgradeable is
         return $.upgradeId;
     }
 
-    function initialize(address excecutor) public initializer {
+    function initialize(address executor) public initializer {
         address[] memory proposers = new address[](1);
         proposers[0] = _msgSender();
         address[] memory executors = new address[](1);
@@ -41,7 +41,7 @@ abstract contract DummyTimelockControllerUpgradeable is
 
         // address(this) -> proxy
         // ERC1967Utils.getImplementation() -> implementation
-        executors[0] = excecutor;
+        executors[0] = executor;
         __TimelockController_init(
             uint256(25_200),
             proposers,
@@ -86,4 +86,12 @@ abstract contract DummyTimelockControllerUpgradeable is
             delay
         );
     }
+
+    // function upgradeToAndCall(
+    //    address newImplementation,
+    //    bytes memory data)
+    // public payable virtual onlyProxy {
+    //     _authorizeUpgrade(newImplementation);
+    //     _upgradeToAndCallUUPS(newImplementation, data);
+    // }
 }
