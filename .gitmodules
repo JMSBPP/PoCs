@@ -55,3 +55,6 @@
 [submodule "designPatterns/proxy/lib/super-dca-gauge"]
 	path = designPatterns/proxy/lib/super-dca-gauge
 	url = https://github.com/Super-DCA-Tech/super-dca-gauge
+[submodule "evm/lib/forge-std"]
+	path = evm/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
