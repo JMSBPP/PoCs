@@ -2,7 +2,8 @@
 src = "src"
 out = "out"
 libs = ["lib"]
-solc_version = "0.8.26"
-evm_version = "cancun"
-
+solc_version = "0.6.6"
+compilation_restrictions = [
+    { paths = "lib/uniswap-v2-periphery/contracts/libraries/", solc_version = "0.6.6" },
+]
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
