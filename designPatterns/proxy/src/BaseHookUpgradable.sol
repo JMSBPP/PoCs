@@ -37,7 +37,6 @@ abstract contract BaseHookUpgradable is Initializable, IHooks {
     ) internal onlyInitializing {
         BaseHookStorage storage $ = _getBaseHookStorage();
         $.poolManager = _poolManager;
-        $.permissions = _permissions;
         validateHookAddress(this);
     }
 
