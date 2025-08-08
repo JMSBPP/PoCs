@@ -28,14 +28,14 @@ abstract contract BaseHookUpgradable is Initializable, IHooks {
 
     function __BaseHook_init(
         IPoolManager _poolManager,
-        Hooks.Permissions calldata _permissions
+        Hooks.Permissions memory _permissions
     ) internal onlyInitializing {
         __BaseHook_init_unchained(_poolManager, _permissions);
     }
 
     function __BaseHook_init_unchained(
         IPoolManager _poolManager,
-        Hooks.Permissions calldata _permissions
+        Hooks.Permissions memory _permissions
     ) internal onlyInitializing {
         BaseHookStorage storage $ = _getBaseHookStorage();
         $.poolManager = _poolManager;

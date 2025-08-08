@@ -82,3 +82,14 @@
 [submodule "erc/lib/v4-periphery"]
 	path = erc/lib/v4-periphery
 	url = https://github.com/uniswap/v4-periphery
+[submodule "designPatterns/proxy/lib/balancer-v3-monorepo"]
+	path = designPatterns/proxy/lib/balancer-v3-monorepo
+	url = https://github.com/balancer/balancer-v3-monorepo
+[submodule "designPatterns/proxy/lib/v3-periphery"]
+	path = designPatterns/proxy/lib/v3-periphery
+	url = https://github.com/uniswap/v3-periphery
+[submodule "lib/v3-periphery"]
+	branch = 0.8
+[submodule "designPatterns/proxy/lib/v3-core"]
+	path = designPatterns/proxy/lib/v3-core
+	url = https://github.com/uniswap/v3-core
