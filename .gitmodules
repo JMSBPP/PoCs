@@ -95,3 +95,6 @@
 	url = https://github.com/uniswap/v3-core
 [submodule "lib/v3-core"]
 	branch = 0.8
+[submodule "designPatterns/proxy/lib/bunni-v2"]
+	path = designPatterns/proxy/lib/bunni-v2
+	url = https://github.com/bunniapp/bunni-v2

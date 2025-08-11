@@ -2,14 +2,13 @@
 pragma solidity ^0.8.24;
 
 import {IRateProvider} from "balancer-v3-monorepo/pkg/interfaces/contracts/solidity-utils/helpers/IRateProvider.sol";
-import {SqrtPriceLibrary} from "./libraries/SqrtPriceLibrary.sol";
 import {IUniswapV3Pool} from "v3-core/interfaces/IUniswapV3Pool.sol";
 import {OracleLibrary} from "v3-periphery/libraries/OracleLibrary.sol";
-abstract contract v3PriceOracle is IRateProvider {
-    using SqrtPriceLibrary for uint256;
-    using SqrtPriceLibrary for uint160;
+import {TickMath} from "v3-core/libraries/TickMath.sol";
+contract v3PriceOracle is IRateProvider {
     using OracleLibrary for address;
     using OracleLibrary for address[];
+    using TickMath for int24;
 
     IUniswapV3Pool public immutable pool;
     constructor(address _pool) {
@@ -37,16 +36,7 @@ abstract contract v3PriceOracle is IRateProvider {
 
     function getRate() external view returns (uint256) {
         (int24 _tick, ) = address(pool).getBlockStartingTickAndLiquidity();
-        address[] memory tokens = new address[](2);
-        tokens[0] = pool.token0();
-        tokens[1] = pool.token1();
-        int24[] memory tick = new int24[](1);
-        tick[0] = _tick;
-        return
-            uint256(
-                tokens.getChainedPrice(tick) < 0
-                    ? -tokens.getChainedPrice(tick)
-                    : tokens.getChainedPrice(tick)
-            );
+        return uint256(_tick.getSqrtRatioAtTick());
+        
     }
 }

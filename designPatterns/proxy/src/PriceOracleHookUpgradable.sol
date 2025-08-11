@@ -5,11 +5,13 @@ import {Initializable} from "openzeppelin-contracts-upgradeable/contracts/proxy/
 import "v4-periphery/src/utils/BaseHook.sol";
 import {BaseHookUpgradable} from "./base/BaseHookUpgradable.sol";
 import {IRateProvider} from "balancer-v3-monorepo/pkg/interfaces/contracts/solidity-utils/helpers/IRateProvider.sol";
-
-abstract contract PriceOracleHookUpgradable is
+import {TickMath} from "v4-core/libraries/TickMath.sol";
+import {SafeCast} from "v4-core/libraries/SafeCast.sol";
+contract PriceOracleHookUpgradable is
     Initializable,
     BaseHookUpgradable
 {
+    using SafeCast for uint256;
     /// @custom:storage-location erc7201:openzeppelin.storage.PriceOracleHook
     struct PriceOracleHookStorage {
         PoolKey poolKey;
@@ -37,10 +39,11 @@ abstract contract PriceOracleHookUpgradable is
     ) internal virtual override returns (bytes4) {
         // TODO: Logic for the getExternalPrice hook
         // And creation of new poolKey with new price if needed
-        uint256 externalPrice = externalMarket().getRate();
-        // if (v3SqrtPriceX96 != initialSqrtPriceX96) {
-        //     poolManager().initialize(poolKey(), v3SqrtPriceX96);
-        // }
+        uint160 sqrtexternalPriceX96 = externalMarket().getRate().toUint160();
+        
+        if (sqrtexternalPriceX96 != initialSqrtPriceX96) {
+            int24 initialTick = poolManager().initialize(poolKey(), sqrtexternalPriceX96);
+        }
     }
 
     // TODO: Checks for beforeInitialize
